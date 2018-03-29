@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * SVD libraries found from https://math.nist.gov/javanumerics/jama/ and inludes the files:
+ * CholeskyDecomposition, EigenvalueDecomposition, LUDecomposition, Maths, Matrix, QRDecomposition, and SingularValueDecomposition
  */
 package SVDPCA;
 
