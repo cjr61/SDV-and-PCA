@@ -17,6 +17,7 @@ public class BinaryOps {
 	}
 	
 	public void IntFileToBinary(String userFileName) {
+		Vector<Byte> converted = new Vector<Byte>();
 		
 	}
 	
