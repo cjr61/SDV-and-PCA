@@ -235,7 +235,6 @@ public class Image_compression {
 
 	private static void ASCIIToBinary(File file) throws IOException {
 		// TODO Auto-generated method stub
-		ArrayList<Integer> ar = new ArrayList<Integer>();
 		values = new ArrayList<ArrayList<Integer>>();
 		scanImg = new Scanner(file);
 		filename = file.getName();
@@ -247,8 +246,9 @@ public class Image_compression {
 		image_width = scanImg.nextInt();
 		max_gray_value = scanImg.nextInt();
 		//store values in an array
-		for(int i=0;i<image_width;i++) {
-			for(int j=0;j<image_height;j++) {
+		for(int i=0;i<image_height;i++) {
+			ArrayList<Integer> ar = new ArrayList<Integer>();
+			for(int j=0;j<image_width;j++) {
 				ar.add(scanImg.nextInt());
 			}
 			values.add(ar);
@@ -264,7 +264,7 @@ public class Image_compression {
 	    
 	    for(ArrayList<Integer> a:values) {
 	    	for(int i=0;i<a.size();i++) {
-	    		out.write(a.get(i));
+	    		out.writeByte(a.get(i));
 	    	}
 	    }
 	    out.flush();
