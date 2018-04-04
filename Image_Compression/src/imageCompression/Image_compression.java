@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,23 +58,31 @@ public class Image_compression {
         U = new Matrix(uRowDimension, rank);
         S = new Matrix(rank, rank);
         V = new Matrix(vRowDimension, rank);
-        for (int i = 0; i < uRowDimension; i++){
-           for (int j = 0; j < rank; j++){
-              U.set(i, j, input.readShort() / 32768d);
-           }
-        }
-        for (int i = 0; i < rank; i++){
-           for (int j = 0; j < rank; j++){
-              if (i == j) S.set(i, j, input.readFloat());
-              else S.set(i, j, 0.0);
-           }
-        }
-        for (int i = 0; i < vRowDimension; i++)
-           for (int j = 0; j < rank; j++)
-              V.set(i, j, input.readShort() / 32768d);
+        try {
+	        for (int i = 0; i < uRowDimension; i++){
+	           for (int j = 0; j < rank; j++){
+	              U.set(i, j, input.readShort() / 32768d);
+	           }
+	        }
+        }catch(EOFException ex1) {}
+        try {
+	        for (int i = 0; i < rank; i++){
+	           for (int j = 0; j < rank; j++){
+	              if (i == j) S.set(i, j, input.readFloat());
+	              else S.set(i, j, 0.0);
+	           }
+	        }
+        }catch(EOFException ex1) {}
+        try {
+	        for (int i = 0; i < vRowDimension; i++)
+	           for (int j = 0; j < rank; j++)
+	              V.set(i, j, input.readShort() / 32768d);
+        }catch(EOFException ex1) {}
+        try {
+        	if(input.readBoolean()==true) transpose = true;
+        	else transpose = false;
+        }catch(EOFException ex1) {}
         input.close();
-        if(input.readBoolean()==true) transpose = true;
-        else transpose = false;
         if(transpose)A=A.transpose();
         A=U.times(S.times(V.transpose()));
         int[][] grays = new int[A.getRowDimension()][A.getColumnDimension()];
