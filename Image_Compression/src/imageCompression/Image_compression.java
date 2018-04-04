@@ -50,66 +50,116 @@ public class Image_compression {
 	}
 
 	private static void readSVD(String args) throws IOException {
-		// TODO Auto-generated method stub
-		input = new DataInputStream(new FileInputStream(args));
-		int uRowDimension = input.readShort(); 
-        int vRowDimension = input.readShort();
-        rank = input.readShort();              
-        U = new Matrix(uRowDimension, rank);
-        S = new Matrix(rank, rank);
-        V = new Matrix(vRowDimension, rank);
-        try {
-	        for (int i = 0; i < uRowDimension; i++){
-	           for (int j = 0; j < rank; j++){
-	              U.set(i, j, input.readShort() / 32768d);
-	           }
-	        }
-        }catch(EOFException ex1) {}
-        try {
-	        for (int i = 0; i < rank; i++){
-	           for (int j = 0; j < rank; j++){
-	              if (i == j) S.set(i, j, input.readFloat());
-	              else S.set(i, j, 0.0);
-	           }
-	        }
-        }catch(EOFException ex1) {}
-        try {
-	        for (int i = 0; i < vRowDimension; i++)
-	           for (int j = 0; j < rank; j++)
-	              V.set(i, j, input.readShort() / 32768d);
-        }catch(EOFException ex1) {}
-        try {
-        	if(input.readBoolean()==true) transpose = true;
-        	else transpose = false;
-        }catch(EOFException ex1) {}
-        input.close();
-        if(transpose)A=A.transpose();
-        A=U.times(S.times(V.transpose()));
-        int[][] grays = new int[A.getRowDimension()][A.getColumnDimension()];
-	         int n = 0;
-	         for (int i = 0; i < grays.length; i++){
-	        	 for (int j = 0; j < grays[i].length; j++){
-	            	n = (int) A.get(i, j);
-	               if (n < 0) grays[i][j] = 0;
-	               else if (n > 255)grays[i][j] = 255;
-	               else grays[i][j] = n;
+	try
+	      {
+	         input = new DataInputStream(new FileInputStream(args));
+	         if (input.readBoolean() == true)
+	         {
+	            transpose = true;
+	         }
+	         else
+	         {
+	            transpose = false;
+	         }
+	         int uRowDimension = input.readShort(); 
+	         int vRowDimension = input.readShort();
+	         rank = input.readShort();              
+	         U = new Matrix(uRowDimension, rank);
+	         S = new Matrix(rank, rank);
+	         V = new Matrix(vRowDimension, rank);
+	         	
+	         for (int i = 0; i < uRowDimension; i++)
+	         {
+	            for (int j = 0; j < rank; j++)
+	            {
+	               U.set(i, j, input.readShort() / 32768d);
+	               System.out.println("u matrix elements"+U.get(i, j));
 	            }
 	         }
-	         
-	         String filename = args.split("_b\\.pgm\\.")[0];
-	         String finalFile = filename + "_k.pgm";
-	         PrintWriter output = new PrintWriter(finalFile);
-	         output.println("P2");
-	         output.println("#Final Image");
-	         output.println(grays[0].length + " " + grays.length);
-	         output.println(255);
-	         for (int i = 0; i < grays.length; i++){
-	            for (int j = 0; j < grays[i].length; j++){
-	               output.print(grays[i][j] + " ");
-	             }
-	            output.println();
+	         for (int i = 0; i < rank; i++)
+	         {
+	            for (int j = 0; j < rank; j++)
+	            {
+	               if (i == j)
+	               {
+	                  S.set(i, j, input.readFloat());
+	               }
+	               else
+	               {
+	                  S.set(i, j, 0.0);
+	               }
+	            }
 	         }
-	         output.close();
+	         for (int i = 0; i < vRowDimension; i++)
+	         {
+	            for (int j = 0; j < rank; j++)
+	            {
+	               V.set(i, j, input.readShort() / 32768d);
+	            }
+	         }
+	         input.close();
+	         
+	         A=U.times(S.times(V.transpose()));
+	         if(transpose)
+	         {
+	        	 A=A.transpose();
+	         }
+	         
+	         
+	         double[][] arr = A.getArray();
+	         int count=0;
+	         
+	         int[][] grays =
+		               new int[A.getRowDimension()][A.getColumnDimension()];
+		         int n = 0;
+		       //  System.out.println("length"+grays.length);
+		         for (int i = 0; i < grays.length; i++)
+		         {
+		              System.out.println("width"+grays[i].length);
+
+		        	 for (int j = 0; j < grays[i].length; j++)
+		            {
+		        		// System.out.println("A matrix is"+A.get(i, j));
+		            	n = (int) A.get(i, j);
+		            	
+		               if (n < 0)
+		               {
+		                   count++;
+		            	   grays[i][j] = 0;
+		               }
+		               else if (n > 255)
+		               {
+		                  grays[i][j] = 255;
+		               }
+		               else
+		               {
+		                  grays[i][j] = n;
+		               }
+		            }
+		         }
+		         
+		         System.out.println("negative values"+count);
+		         String filename = args.split("_b\\.pgm\\.")[0];
+		         String target = filename + "_k.pgm";
+		         PrintWriter output = new PrintWriter(target);
+		         output.println("P2");
+		         output.println("#Final Image");
+		         output.println(grays[0].length + " " + grays.length);
+		         output.println(255);
+		         for (int i = 0; i < grays.length; i++){
+		            for (int j = 0; j < grays[i].length; j++){
+		               output.print(grays[i][j] + " ");
+		             }
+		            output.println();
+		         }
+		         output.close();
+		   
+	      }
+	      catch (Exception e)
+	      {
+	         e.printStackTrace();
+	      }
+
 	}
 
 	private static void makeSVD(String header, String svd, String k) throws FileNotFoundException {
