@@ -16,9 +16,9 @@ public class SVD_Decomposition {
 	public static void main(String[] args) throws FileNotFoundException {
 		File file = new File(args[0]);
 		Scanner sc = new Scanner(file);
-		String line = sc.nextLine();
-		if(line.startsWith("P")||line.startsWith("#"))
 		sc.nextLine();
+		if (sc.hasNext("#"))
+			sc.nextLine();
 		width = Integer.parseInt(sc.next());
 		height = Integer.parseInt(sc.next());
 		maxPixVal = Integer.parseInt(sc.next());

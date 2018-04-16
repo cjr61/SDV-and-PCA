@@ -299,7 +299,8 @@ public class Image_compression {
 		filename = file.getName();
 		//Removing comment lines
 		scanImg.nextLine();
-		scanImg.nextLine();
+		if (scanImg.hasNext("#"))
+			scanImg.nextLine();
 		//Get the details of the image
 		image_height = scanImg.nextInt();
 		image_width = scanImg.nextInt();
