@@ -55,11 +55,11 @@ public class Image_compression {
 	         input = new DataInputStream(new FileInputStream(args));
 	         if (input.readBoolean() == true)
 	         {
-	            transpose = true;
+	            transpose = false;
 	         }
 	         else
 	         {
-	            transpose = false;
+	            transpose = true;
 	         }
 	         int uRowDimension = input.readShort(); 
 	         int vRowDimension = input.readShort();
